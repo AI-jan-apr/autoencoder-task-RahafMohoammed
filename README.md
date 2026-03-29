@@ -1,35 +1,50 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/jYmqdKSO)
-# 📌 Autoencoder with MNIST Dataset
+# Autoencoder with MNIST Dataset
 
-This project demonstrates how to build, train, and use an **autoencoder** for the **MNIST handwritten digit dataset**. It includes visualization of digits, dimensionality reduction, and an image retrieval based on **cosine similarity**.
+This project builds and trains an autoencoder on the MNIST handwritten digit dataset. It covers dimensionality reduction and image retrieval using cosine similarity.
 
----
+## Project Structure
 
-## 🚀 Project Overview
+The project is implemented in a single Jupyter notebook: `autoencoder_mnist.ipynb`
 
-1. **Data Loading**:
+## Requirements
 
-   * The MNIST dataset (`mnist_784`) is fetched using `fetch_openml`.
-   * It contains 70,000 grayscale images of handwritten digits (0–9).
-   * Each image is represented as a **28×28** pixel grid (flattened to 784 features).
+```
+tensorflow
+scikit-learn
+matplotlib
+numpy
+```
 
-2. **Autoencoder Architecture**:
+Install with:
 
-   * **Encoder**: Compresses 784-dimensional input into an n-dimensional latent representation.
-   * **Decoder**: Reconstructs the original 784-dimensional image from the latent space.
-   * **Loss Function**
-   * **Optimizer**
+```
+pip install tensorflow scikit-learn matplotlib numpy
+```
 
-3. **Training**:
+## Steps
 
-   * The autoencoder is trained to reconstruct the input images.
+**1. Data Loading**
+The MNIST dataset is loaded using `fetch_openml`. It contains 70,000 grayscale images of handwritten digits (0-9), each represented as a flattened 784-dimensional vector. Pixel values are normalized to the range [0, 1].
 
-4. **Dimensionality Reduction & Visualization**:
+**2. Autoencoder Architecture**
+The model consists of an encoder and a decoder. The encoder compresses the input from 784 dimensions down to a 32-dimensional latent vector through two hidden layers (256, 128). The decoder mirrors this structure and reconstructs the original image from the latent vector. Binary crossentropy is used as the loss function with the Adam optimizer.
 
-   * Encoded representations of test images are further reduced to 2D.
+**3. Training**
+The autoencoder is trained with the input as both the input and target (`fit(X_train, X_train)`). Training runs for 20 epochs with a batch size of 256.
 
-5. **Image Retrieval**:
+**4. Dimensionality Reduction**
+The encoder is used to produce latent representations of the test set. t-SNE is then applied to reduce these 32-dimensional vectors to 2D for visualization. Each digit forms a distinct cluster, showing that the latent space captures meaningful structure.
 
-   * A sample image is encoded into the latent space using the encoder only.
-   * Cosine similarity is used to compare it against the training set.
-   * The top-5 most similar images are retrieved and displayed.
+**5. Image Retrieval**
+A query image is encoded into the latent space. Cosine similarity is computed between the query vector and all training set encodings. The top 5 most similar images are returned and displayed.
+
+## Key Design Decisions
+
+- Latent dimension of 32 balances compression and reconstruction quality
+- Sigmoid activation in the final decoder layer keeps outputs in [0, 1]
+- Cosine similarity is used over Euclidean distance because it measures direction rather than magnitude, which is more meaningful in latent spaces
+- t-SNE is preferred over PCA for visualization because it better captures non-linear cluster structure
+
+## Experimentation
+
+Try changing `LATENT_DIM` to 8, 64, or 128 to observe the effect on reconstruction quality, cluster separation, and retrieval accuracy.
